@@ -94,12 +94,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayPosts = (posts) => {
         const base = getPostsBasePath();
         const currentSlug = getCurrentSlug();
+        const isRoot = currentSlug === null;
+        // On the root page, the "active" item is the first (newest) post in
+        // the sorted list, since no specific post is loaded.
+        const activeSlug = currentSlug || (isRoot && posts.length > 0 ? posts[0].slug : null);
         const postLinks = posts.map(post => {
-            const isActive = currentSlug && post.slug === currentSlug;
+            const isActive = activeSlug && post.slug === activeSlug;
             const cls = isActive ? 'active' : '';
             return `<li><a href="${base}${post.slug}/" class="${cls}">${post.title}</a></li>`;
         }).join('');
         postListUl.innerHTML = postLinks;
+    };
+
+    const formatDate = (iso) => {
+        if (!iso) return '';
+        const d = new Date(iso);
+        if (isNaN(d)) return '';
+        return d.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    };
+
+    const renderLatestPost = (post) => {
+        if (!postContent) return;
+        const base = getPostsBasePath();
+        const dateStr = formatDate(post.date);
+        const tagsHtml = (post.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+        const descHtml = post.description ? `<p>${post.description}</p>` : '';
+        postContent.innerHTML = `
+            <div class="post-header">
+                <p class="post-meta">${dateStr}</p>
+                <h1>${post.title}</h1>
+            </div>
+            ${tagsHtml ? `<div class="tags-container">${tagsHtml}</div>` : ''}
+            ${descHtml}
+            <p><a href="${base}${post.slug}/">Read post &rarr;</a></p>
+        `;
     };
 
     const renderPaginationControls = () => {
@@ -193,6 +221,13 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTagFilters();
             displayPosts(filteredPosts);
             renderPaginationControls();
+
+            // On the root page, render the latest post into the article area.
+            // Per-post pages have their own hand-baked article content and are
+            // left untouched.
+            if (getCurrentSlug() === null && allPosts.length > 0) {
+                renderLatestPost(allPosts[0]);
+            }
 
         } catch (error) {
             console.error('Error initializing app:', error);
