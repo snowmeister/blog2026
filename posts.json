@@ -1,5 +1,19 @@
 [
   {
+    "title": "Just Another Nerdy Experiment (Adventures while building and living with a custom AI assistant)",
+    "description": "An AI assistant for disabled ex-software engineer. Built as a tool. As a learning exercise. And as a distraction from the pain, fatigue, and the fact I can't code professionally any more.",
+    "image": "",
+    "tags": [
+      "jane",
+      "ai",
+      "disability",
+      "building-in-public"
+    ],
+    "file": "just-another-nerdy-experiment.md",
+    "slug": "just-another-nerdy-experiment",
+    "date": "2026-07-07T17:30:00.000Z"
+  },
+  {
     "title": "The problem with modern politics",
     "description": "",
     "image": "",
