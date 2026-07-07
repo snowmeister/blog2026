@@ -69,9 +69,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Functions ---
 
+    // The post list links need a relative path that works from both the root
+    // and from per-post pages (one level deep). Posts live at /<slug>/, so a
+    // path starting with the slug works on any page when the JSON is fetched
+    // with a path-relative URL (see the fetch below). We use './' for root
+    // pages and '../' for nested pages.
+    const getPostsBasePath = () => {
+        const path = window.location.pathname;
+        if (path === '/' || path.endsWith('/index.html') || path === '') {
+            return './';
+        }
+        return '../';
+    };
+
+    const getCurrentSlug = () => {
+        const path = window.location.pathname;
+        const match = path.match(/\/([^/]+)\/?$/);
+        if (!match) return null;
+        const slug = match[1];
+        if (slug === '' || slug === 'index.html') return null;
+        return slug;
+    };
+
     const displayPosts = (posts) => {
-        // Links now point to the static directories, relative to the homepage.
-        const postLinks = posts.map(post => `<li><a href="./${post.slug}/">${post.title}</a></li>`).join('');
+        const base = getPostsBasePath();
+        const currentSlug = getCurrentSlug();
+        const postLinks = posts.map(post => {
+            const isActive = currentSlug && post.slug === currentSlug;
+            const cls = isActive ? 'active' : '';
+            return `<li><a href="${base}${post.slug}/" class="${cls}">${post.title}</a></li>`;
+        }).join('');
         postListUl.innerHTML = postLinks;
     };
 
@@ -145,29 +172,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Main Initialization ---
     const init = async () => {
-        // This script only runs on the homepage (index.html).
-        // It's responsible for fetching post data for client-side filtering.
-        // The initial render of the post list is now done by the server.
+        // Run on every page that has a post list element. The hand-baked HTML
+        // nav is replaced with one driven by posts.json, sorted newest-first.
 
-        // Check if we are on the homepage by looking for the post list element.
         if (!postListUl) {
-            // We are likely on a static post page, so do nothing.
             return;
         }
 
         try {
-            // Fetch the JSON using a relative path for robustness.
-            const response = await fetch('./posts.json');
+            // Fetch the JSON using a path-relative URL so this works from any depth.
+            const response = await fetch(`${getPostsBasePath()}posts.json`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
             allPosts = await response.json();
-            filteredPosts = [...allPosts]; // Set initial state for filtering
+            // Sort newest-first by date, regardless of JSON array order.
+            allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+            filteredPosts = [...allPosts];
 
+            // Render the post list, tag filters, and pagination from JSON.
             renderTagFilters();
-            renderPaginationControls(); // Render pagination for the full list
-
-            // The initial post list is now rendered by the server, so no need to render it here.
-            // When a user clicks a filter, filterAndRender() will be called to update the list.
+            displayPosts(filteredPosts);
+            renderPaginationControls();
 
         } catch (error) {
             console.error('Error initializing app:', error);
@@ -177,9 +202,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Only run the initialization logic on the homepage.
-    // The menu functionality will work on all pages regardless.
-    if (window.location.pathname === '/' || window.location.pathname.endsWith('/index.html') || window.location.pathname === '') {
+    // Run on every page that has the nav. The menu/mobile logic still works
+    // on every page regardless.
+    if (postListUl) {
         init();
     }
 });
