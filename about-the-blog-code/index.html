@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why I Built Yet Another Blog Engine (And Why This One Might Stick)</title>
+
+    <!-- SEO & Social Media Meta Tags -->
+    <meta name="description" content="">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://blog.snowmeister.ninja/about-the-blog-code/">
+    <meta property="og:title" content="Why I Built Yet Another Blog Engine (And Why This One Might Stick)">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="https://blog.snowmeister.ninja">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://blog.snowmeister.ninja/about-the-blog-code/">
+    <meta property="twitter:title" content="Why I Built Yet Another Blog Engine (And Why This One Might Stick)">
+    <meta property="twitter:description" content="">
+    <meta property="twitter:image" content="https://blog.snowmeister.ninja">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1><a href="/" style="text-decoration: none; color: inherit;">Bites, Beaks, Bytes And Rights</a></h1>
+            <button id="menu-toggle" class="menu-toggle-button" aria-label="Open navigation menu" aria-controls="posts-list">&#9776;</button>
+        </header>
+
+        <main>
+            <nav id="posts-list" aria-hidden="true">
+                <button id="menu-close" class="menu-close-button" aria-label="Close navigation menu">&times;</button>
+                <div id="tag-filter-container">
+                    <h4>Filter by Tag</h4>
+                    <div id="tag-filter">
+                        
+        <a href="../" class="tag-button">All Posts</a>
+        <a href="../?tag=opinion" class="tag-button">opinion</a><a href="../?tag=rights" class="tag-button">rights</a><a href="../?tag=politics" class="tag-button">politics</a><a href="../?tag=disability" class="tag-button">disability</a><a href="../?tag=coding" class="tag-button">coding</a><a href="../?tag=frontend" class="tag-button">frontend</a><a href="../?tag=introduction" class="tag-button">introduction</a><a href="../?tag=general" class="tag-button">general</a>
+      
+                    </div>
+                </div>
+                <ul id="posts-list-ul">
+                    <li><a href="../the-problem-with-modern-politics/" class="">The problem with modern politics</a></li><li><a href="../the-knock-on-effects/" class=""> The Ripple Effect: How Welfare Cuts Will Add Strain To The System </a></li><li><a href="../fairer-alternatives/" class="">Why Are the Vulnerable Always First in Line for Cuts? There Are Fairer Choices</a></li><li><a href="../the-new-bill-a-calculate-blow/" class="">The New Welfare Bill: A Calculated Blow to Disabled People</a></li><li><a href="../about-the-blog-code/" class="active">Why I Built Yet Another Blog Engine (And Why This One Might Stick)</a></li><li><a href="../hello/" class="">Hello!</a></li>
+                </ul>
+                <div id="pagination-container">
+                    <!-- Pagination is intentionally omitted from post pages -->
+                </div>
+            </nav>
+            <article id="post-content">
+                <div class="post-header">
+                    <p class="post-meta">July 3, 2025</p>
+                    <h1>Why I Built Yet Another Blog Engine (And Why This One Might Stick)</h1>
+                </div>
+                <div class="tags-container"><span class="tag">coding</span><span class="tag">frontend</span></div>
+                <h3>A Bit of Background</h3>
+<p>I’ve set out on this journey a few times—keeping a blog, sometimes using online platforms like WordPress, sometimes writing code to run a custom blog. Some attempts were more successful than others, but I always seem to run out of steam, or life gets in the way. Let’s see how far I get this time!</p>
+<p>This time around, I wanted to strip things back to basics. No frameworks, no databases, no “sign up for our cloud service” nonsense. Just a simple, static site that I can host on any server I happen to have lying around. I want to write, hit a button, and have my words show up online. That’s it.</p>
+<h3>The Requirement</h3>
+<p>So, what did I actually need? Honestly, not much. I wanted a front-end only, static HTML/vanilla JS/CSS app to publish my ramblings. No backend, no database, nothing fancy at all. Just some text files written in Markdown, compiled into a blog site. I didn’t want to be dependent on any particular hosting service or platform. I run a couple of servers, so I just wanted to be able to hang the code on one of them and leave it.</p>
+<h3>The Solution</h3>
+<p>Enter the “Lazy Blog Template.” It’s about as bare-bones as you can get, but it ticks all my boxes: it’s responsive, accessible, and doesn’t require a backend or database. It’s built using just HTML, JavaScript, and CSS, with a little Node.js tool to compile everything when I write a new article.</p>
+<h4>What Makes It Tick?</h4>
+<ul>
+<li><strong>Simple &amp; File-Based:</strong> There’s no database or complex backend setup. All your posts are just Markdown files in a folder.</li>
+<li><strong>Markdown Support:</strong> I write my posts in <code>.md</code> files using standard Markdown syntax. It’s quick, familiar, and portable.</li>
+<li><strong>Responsive &amp; Accessible:</strong> The layout works on desktop and mobile, and there’s an accessible off-canvas mobile menu with proper focus management and keyboard navigation.</li>
+<li><strong>Tag Filtering &amp; Pagination:</strong> The site automatically generates a list of tags to filter posts, and you can navigate with simple “Previous” and “Next” controls.</li>
+<li><strong>Easy to Customize:</strong> Want to change the look? Just tweak a few CSS variables.</li>
+</ul>
+<h4>How It Works (Nuts &amp; Bolts)</h4>
+<ol>
+<li><strong>Write Your Posts:</strong> Add your blog posts as <code>.md</code> files inside the <code>/posts</code> directory. Each post starts with a little YAML front matter for the title and tags.</li>
+<li><strong>Build the Index:</strong> After adding or editing posts, run a Node.js script (<code>node scripts/generate-index.js</code>). This scans your posts and creates a <code>posts.json</code> file that the frontend uses to display everything.</li>
+<li><strong>Serve It Up:</strong> Since it’s a static site, you can open <code>index.html</code> directly, but for best results (and to avoid fetch/CORS weirdness), use a simple local server. I like the Live Server extension in VS Code.</li>
+<li><strong>Customize:</strong> Change the site title in <code>index.html</code>, and tweak the colors and fonts by editing the CSS variables at the top of <code>/css/style.css</code>.</li>
+</ol>
+<h4>Example Post</h4>
+<p>Here’s what a post looks like:</p>
+<pre><code class="language-markdown">---
+title: &quot;My First Post&quot;
+tags:
+  - introduction
+  - general
+---
+
+This is the content of my first post, written in Markdown.
+
+To include an image, use the following syntax:
+
+![An image description](../images/my-cool-image.png)
+</code></pre>
+<h3>Why Bother?</h3>
+<p>Honestly, there are a million ways to blog these days, but I wanted something I could fully understand, control, and tinker with. No hidden magic, no vendor lock-in, no monthly fees. Just a simple, accessible, and lightweight blog that I can update with a text editor and a single command.</p>
+<p>If you’re like me—someone who likes to keep things simple, and maybe even enjoys a bit of DIY—feel free to <a href="https://github.com/snowmeister/lazy-blog">grab the Lazy Blog Template</a> from GitHub and make it your own. It’s open source (MIT License), so hack away!</p>
+<p>Let’s see how long I keep this one going. Thanks for reading, and if you have questions or suggestions, drop me a line!</p>
+<p>Let me know if you want any tweaks or additions!</p>
+
+            </article>
+        </main>
+
+        <footer>
+            <p>Powered by pure JavaScript and Markdown.</p>
+        </footer>
+    </div>
+
+    <!-- Markdown to HTML converter -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Our custom logic -->
+    <script src="/js/main.js"></script>
+</body>
+</html>
