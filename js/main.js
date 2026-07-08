@@ -219,6 +219,20 @@ document.addEventListener('DOMContentLoaded', () => {
         allTags.forEach(tag => tagFilterContainer.appendChild(createButton(tag, tag)));
     };
 
+    // --- Vercel Web Analytics ---
+    // Inject the analytics script once per page. Idempotent — if a script
+    // with the same src is already in the head, do nothing.
+    const injectAnalytics = () => {
+        const src = '/_vercel/insights/script.js';
+        if (document.head.querySelector(`script[src="${src}"]`)) return;
+        const script = document.createElement('script');
+        script.src = src;
+        script.defer = true;
+        script.dataset.sdkn = '@vercel/analytics';
+        script.dataset.sdkv = '1';
+        document.head.appendChild(script);
+    };
+
     // --- Main Initialization ---
     const init = async () => {
         // Run on every page that has a post list element. The hand-baked HTML
@@ -250,6 +264,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const olderPostsLimit = 6;
                 renderLatestPost(allPosts[0], allPosts.slice(1, 1 + olderPostsLimit));
             }
+
+            // Vercel Web Analytics. Loaded after the main work so it doesn't
+            // compete with critical rendering.
+            injectAnalytics();
 
         } catch (error) {
             console.error('Error initializing app:', error);
