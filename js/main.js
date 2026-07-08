@@ -129,8 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <article class="post-card">
                         <p class="post-meta">${d}</p>
                         <h3><a href="${base}${p.slug}/">${p.title}</a></h3>
-                        ${desc}
                         ${t ? `<div class="tags-container">${t}</div>` : ''}
+                        ${desc}
                         <div class="read-more-row"><a href="${base}${p.slug}/" class="read-more">Read more &rarr;</a></div>
                     </article>
                 `;
