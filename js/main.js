@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3><a href="${base}${p.slug}/">${p.title}</a></h3>
                         ${desc}
                         ${t ? `<div class="tags-container">${t}</div>` : ''}
-                        <p><a href="${base}${p.slug}/" class="read-more">Read post &rarr;</a></p>
+                        <div class="read-more-row"><a href="${base}${p.slug}/" class="read-more">Read more &rarr;</a></div>
                     </article>
                 `;
             }).join('');
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             ${tagsHtml ? `<div class="tags-container">${tagsHtml}</div>` : ''}
             ${descHtml}
-            <p><a href="${base}${post.slug}/">Read post &rarr;</a></p>
+            <div class="read-more-row"><a href="${base}${post.slug}/" class="read-more">Read more &rarr;</a></div>
             ${olderHtml}
         `;
     };

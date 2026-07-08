@@ -441,11 +441,25 @@ article#post-content pre code {
     padding-bottom: 0.5em;
 }
 
-.post-card .read-more {
+.read-more-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5em;
+    margin-bottom: 0;
+}
+
+.read-more {
     font-family: var(--font-heading);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-primary);
+    color: var(--color-primary);
+}
+
+.read-more:hover {
+    background-color: var(--color-primary-light);
 }
 
 .post-excerpt {
