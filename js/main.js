@@ -113,12 +113,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return d.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
     };
 
-    const renderLatestPost = (post) => {
+    const renderLatestPost = (post, olderPosts = []) => {
         if (!postContent) return;
         const base = getPostsBasePath();
         const dateStr = formatDate(post.date);
         const tagsHtml = (post.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
         const descHtml = post.description ? `<p>${post.description}</p>` : '';
+        let olderHtml = '';
+        if (olderPosts.length > 0) {
+            const items = olderPosts.map(p => {
+                const d = formatDate(p.date);
+                return `<li><span class="post-date-nav">${d}</span> <a href="${base}${p.slug}/">${p.title}</a></li>`;
+            }).join('');
+            olderHtml = `
+                <section class="older-posts">
+                    <h2>More posts</h2>
+                    <ul>${items}</ul>
+                </section>
+            `;
+        }
         postContent.innerHTML = `
             <div class="post-header">
                 <p class="post-meta">${dateStr}</p>
@@ -127,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ${tagsHtml ? `<div class="tags-container">${tagsHtml}</div>` : ''}
             ${descHtml}
             <p><a href="${base}${post.slug}/">Read post &rarr;</a></p>
+            ${olderHtml}
         `;
     };
 
@@ -222,11 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
             displayPosts(filteredPosts);
             renderPaginationControls();
 
-            // On the root page, render the latest post into the article area.
-            // Per-post pages have their own hand-baked article content and are
-            // left untouched.
+            // On the root page, render the latest post into the article area,
+            // followed by a compact list of older posts. Per-post pages have
+            // their own hand-baked article content and are left untouched.
             if (getCurrentSlug() === null && allPosts.length > 0) {
-                renderLatestPost(allPosts[0]);
+                const olderPostsLimit = 5;
+                renderLatestPost(allPosts[0], allPosts.slice(1, 1 + olderPostsLimit));
             }
 
         } catch (error) {
