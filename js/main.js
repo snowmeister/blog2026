@@ -118,26 +118,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const base = getPostsBasePath();
         const dateStr = formatDate(post.date);
         const tagsHtml = (post.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
-        const descHtml = post.description ? `<p class="post-excerpt">${post.description}</p>` : '';
+        const descText = post.description || '';
         let olderHtml = '';
         if (olderPosts.length > 0) {
             const cards = olderPosts.map(p => {
                 const d = formatDate(p.date);
                 const t = (p.tags || []).slice(0, 3).map(x => `<span class="tag">${x}</span>`).join('');
-                const desc = p.description ? `<p class="post-excerpt">${p.description}</p>` : '';
+                const cardDesc = p.description || '';
                 return `
                     <article class="post-card">
                         <p class="post-meta">${d}</p>
                         <h3><a href="${base}${p.slug}/">${p.title}</a></h3>
                         ${t ? `<div class="tags-container">${t}</div>` : ''}
-                        ${desc}
-                        <div class="read-more-row"><a href="${base}${p.slug}/" class="read-more">Read more &rarr;</a></div>
+                        <p class="post-excerpt">${cardDesc} <a href="${base}${p.slug}/" class="read-more">Read more &rarr;</a></p>
                     </article>
                 `;
             }).join('');
             olderHtml = `
                 <section class="older-posts">
-                    <h2>More posts</h2>
                     <div class="post-card-grid">${cards}</div>
                 </section>
             `;
@@ -148,8 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h1>${post.title}</h1>
             </div>
             ${tagsHtml ? `<div class="tags-container">${tagsHtml}</div>` : ''}
-            ${descHtml}
-            <div class="read-more-row"><a href="${base}${post.slug}/" class="read-more">Read more &rarr;</a></div>
+            <p class="post-excerpt">${descText} <a href="${base}${post.slug}/" class="read-more">Read more &rarr;</a></p>
             ${olderHtml}
         `;
     };
@@ -250,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // followed by a compact list of older posts. Per-post pages have
             // their own hand-baked article content and are left untouched.
             if (getCurrentSlug() === null && allPosts.length > 0) {
-                const olderPostsLimit = 5;
+                const olderPostsLimit = 6;
                 renderLatestPost(allPosts[0], allPosts.slice(1, 1 + olderPostsLimit));
             }
 
