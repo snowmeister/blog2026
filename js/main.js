@@ -118,17 +118,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const base = getPostsBasePath();
         const dateStr = formatDate(post.date);
         const tagsHtml = (post.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
-        const descHtml = post.description ? `<p>${post.description}</p>` : '';
+        const descHtml = post.description ? `<p class="post-excerpt">${post.description}</p>` : '';
         let olderHtml = '';
         if (olderPosts.length > 0) {
-            const items = olderPosts.map(p => {
+            const cards = olderPosts.map(p => {
                 const d = formatDate(p.date);
-                return `<li><span class="post-date-nav">${d}</span> <a href="${base}${p.slug}/">${p.title}</a></li>`;
+                const t = (p.tags || []).slice(0, 3).map(x => `<span class="tag">${x}</span>`).join('');
+                const desc = p.description ? `<p class="post-excerpt">${p.description}</p>` : '';
+                return `
+                    <article class="post-card">
+                        <p class="post-meta">${d}</p>
+                        <h3><a href="${base}${p.slug}/">${p.title}</a></h3>
+                        ${desc}
+                        ${t ? `<div class="tags-container">${t}</div>` : ''}
+                        <p><a href="${base}${p.slug}/" class="read-more">Read post &rarr;</a></p>
+                    </article>
+                `;
             }).join('');
             olderHtml = `
                 <section class="older-posts">
                     <h2>More posts</h2>
-                    <ul>${items}</ul>
+                    <div class="post-card-grid">${cards}</div>
                 </section>
             `;
         }
