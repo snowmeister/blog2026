@@ -111,23 +111,17 @@ nav#posts-list {
 .tag-button {
     font-family: var(--font-heading);
     font-weight: 400;
+    font-size: 0.7rem;
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
     border: none;
     border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.75em;
-    transition: all 0.2s ease;
-    display: flex;
-    font-family: var(--font-heading);
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
     padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 400;
     margin: 0.01em;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-   
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .tag-button:hover {
@@ -216,7 +210,7 @@ nav#posts-list li a.active {
     font-family: var(--font-body);
     font-weight: 400;
     font-size: 0.8em;
-    color: #888;
+    color: #666;
 }
 
 /* --- Pagination --- */
@@ -255,7 +249,7 @@ nav#posts-list li a.active {
 #pagination-container .page-info {
     font-family: var(--font-heading);
     font-size: 0.6rem;
-    color: #888;
+    color: #666;
 }
 
 /* --- Article Content --- */
@@ -277,7 +271,7 @@ article#post-content p{
     font-size: 0.8rem;
     text-align: right;
     margin-bottom: 5px;
-    color: #888;
+    color: #666;
 }
 
 /* --- Footer --- */
@@ -286,7 +280,7 @@ footer {
     padding-top: 20px;
     font-family: var(--font-heading);
     font-size: 0.8em;
-    color: #888;
+    color: #666;
     text-align: center;
 }
 

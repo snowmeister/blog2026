@@ -1,3 +1,20 @@
+<!--
+    Root index page template for lazy-blog.
+
+    The page is mostly a shell: the article body, the post list, the tag
+    filter, and the pagination are all populated client-side by js/main.js
+    from dist/posts.json. The <noscript> block provides a static fallback
+    that lists every post for readers without JavaScript.
+
+    Available placeholders (case-sensitive, substituted as exact strings):
+
+      {{NOSCRIPT_POSTS_LIST}}  Pre-rendered <li> elements, one per post, in
+                               newest-first order. Each links to
+                               ./<slug>/ (relative to the root).
+
+      {{BASE_PATH}}            Path prefix for asset and link URLs.
+                               Always "./" on the root template.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,30 +23,28 @@
     <title>Bites, Beaks, Bytes And Rights</title>
 
     <!-- SEO & Social Media Meta Tags -->
-    <meta name="description" content="A blog by Snowy ,  code, AI, disability, politics, parrots, and the experiments in between.">
+    <meta name="description" content="A blog by Snowy — code, AI, disability, politics, parrots, and the experiments in between.">
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://blog.snowmeister.ninja/">
+    <meta property="og:url" content="./">
     <meta property="og:title" content="Bites, Beaks, Bytes And Rights">
-    <meta property="og:description" content="A blog by Snowy ,  code, AI, disability, politics, parrots, and the experiments in between.">
-    <meta property="og:image" content="https://blog.snowmeister.ninja">
+    <meta property="og:description" content="A blog by Snowy — code, AI, disability, politics, parrots, and the experiments in between.">
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://blog.snowmeister.ninja/">
+    <meta property="twitter:url" content="./">
     <meta property="twitter:title" content="Bites, Beaks, Bytes And Rights">
-    <meta property="twitter:description" content="A blog by Snowy ,  code, AI, disability, politics, parrots, and the experiments in between.">
-    <meta property="twitter:image" content="https://blog.snowmeister.ninja">
+    <meta property="twitter:description" content="A blog by Snowy — code, AI, disability, politics, parrots, and the experiments in between.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="{{BASE_PATH}}css/style.css">
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1><a href="/" style="text-decoration: none; color: inherit;">Bites, Beaks, Bytes And Rights</a></h1>
+            <h1><a href="{{BASE_PATH}}" style="text-decoration: none; color: inherit;">Bites, Beaks, Bytes And Rights</a></h1>
             <button id="menu-toggle" class="menu-toggle-button" aria-label="Open navigation menu" aria-controls="posts-list">&#9776;</button>
         </header>
 
@@ -37,17 +52,15 @@
             <nav id="posts-list" aria-hidden="true">
                 <button id="menu-close" class="menu-close-button" aria-label="Close navigation menu">&times;</button>
                 <div id="tag-filter-container">
-                    <h4>Filter by Tag</h4>
                     <div id="tag-filter">
-                    
-        
+                        <!-- Tag filter buttons will be injected here by JavaScript -->
                     </div>
                 </div>
                 <ul id="posts-list-ul">
-                
+                    <!-- Post links will be injected here by JavaScript -->
                 </ul>
                 <div id="pagination-container">
-                    <!-- Pagination is intentionally omitted from post pages -->
+                    <!-- Pagination controls will be injected here -->
                 </div>
             </nav>
             <article id="post-content">
@@ -58,27 +71,18 @@
                     <h1>Bites, Beaks, Bytes And Rights</h1>
                     <p>This site renders its post list with JavaScript. You can still browse the posts directly:</p>
                     <ul>
-                        <li><a href="./just-another-nerdy-experiment/">Just Another Nerdy Experiment</a></li>
-                        <li><a href="./the-problem-with-modern-politics/">The problem with modern politics</a></li>
-                        <li><a href="./the-knock-on-effects/">The Ripple Effect: How Welfare Cuts Will Add Strain To The System</a></li>
-                        <li><a href="./fairer-alternatives/">Why Are the Vulnerable Always First in Line for Cuts? There Are Fairer Choices</a></li>
-                        <li><a href="./the-new-bill-a-calculate-blow/">The New Welfare Bill: A Calculated Blow to Disabled People</a></li>
-                        <li><a href="./about-the-blog-code/">Why I Built Yet Another Blog Engine (And Why This One Might Stick)</a></li>
-                        <li><a href="./hello/">Hello!</a></li>
+                        {{NOSCRIPT_POSTS_LIST}}
                     </ul>
                 </article>
             </noscript>
         </main>
 
         <footer>
-            <p>Powered by pure JavaScript and Markdown.</p>
+            <p>Powered by lazy-blog.</p>
         </footer>
     </div>
 
-    <!-- Markdown to HTML converter -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
     <!-- Our custom logic -->
-    <script src="/js/main.js"></script>
+    <script src="{{BASE_PATH}}js/main.js"></script>
 </body>
 </html>

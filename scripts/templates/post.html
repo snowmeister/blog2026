@@ -1,0 +1,85 @@
+<!--
+    Per-post page template for lazy-blog.
+
+    Available placeholders (case-sensitive, substituted as exact strings):
+
+      {{TITLE}}         The post's title.
+      {{DESCRIPTION}}   The post's description (or empty string).
+      {{SLUG}}          The post's URL slug.
+      {{DATE}}          The post's date, formatted as a human-readable string.
+      {{TAGS}}          A pre-rendered HTML string of <span class="tag"> elements.
+      {{BODY_HTML}}     The post body, already converted from Markdown to HTML.
+      {{BASE_PATH}}      Path prefix for asset and link URLs. "./" for the
+                        root page, "../" for per-post pages. Use the
+                        same prefix everywhere within a single template.
+
+    The nav block (#posts-list, #tag-filter, etc.) is empty in the HTML and
+    filled in by js/main.js from dist/posts.json at runtime.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+
+    <!-- SEO & Social Media Meta Tags -->
+    <meta name="description" content="{{DESCRIPTION}}">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="./{{SLUG}}/">
+    <meta property="og:title" content="{{TITLE}}">
+    <meta property="og:description" content="{{DESCRIPTION}}">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="./{{SLUG}}/">
+    <meta property="twitter:title" content="{{TITLE}}">
+    <meta property="twitter:description" content="{{DESCRIPTION}}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{BASE_PATH}}css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1><a href="{{BASE_PATH}}" style="text-decoration: none; color: inherit;">Bites, Beaks, Bytes And Rights</a></h1>
+            <button id="menu-toggle" class="menu-toggle-button" aria-label="Open navigation menu" aria-controls="posts-list">&#9776;</button>
+        </header>
+
+        <main>
+            <nav id="posts-list" aria-hidden="true">
+                <button id="menu-close" class="menu-close-button" aria-label="Close navigation menu">&times;</button>
+                <div id="tag-filter-container">
+                    <div id="tag-filter">
+                        <!-- Tag filter buttons will be injected here by JavaScript -->
+                    </div>
+                </div>
+                <ul id="posts-list-ul">
+                    <!-- Post links will be injected here by JavaScript -->
+                </ul>
+                <div id="pagination-container">
+                    <!-- Pagination controls will be injected here -->
+                </div>
+            </nav>
+            <article id="post-content">
+                <div class="post-header">
+                    <p class="post-meta">{{DATE}}</p>
+                    <h1>{{TITLE}}</h1>
+                </div>
+                <div class="tags-container">{{TAGS}}</div>
+                {{BODY_HTML}}
+            </article>
+        </main>
+
+        <footer>
+            <p>Powered by lazy-blog.</p>
+        </footer>
+    </div>
+
+    <!-- Our custom logic -->
+    <script src="{{BASE_PATH}}js/main.js"></script>
+</body>
+</html>
