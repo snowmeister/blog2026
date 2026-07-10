@@ -1,0 +1,13 @@
+{
+  "name": "blog-snowmeister-ninja",
+  "version": "0.0.1",
+  "description": "Bites, Beaks, Bytes And Rights — a blog by Snowy",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js"
+  },
+  "dependencies": {
+    "@11ty/gray-matter": "^2.1.0",
+    "marked": "^18.0.5"
+  }
+}

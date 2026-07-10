@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const postListUl = document.getElementById('posts-list-ul');
-    const postContent = document.getElementById('post-content'); // This is the article on the main page
+    const postContent = document.getElementById('post-content'); // The article area on the root page.
     const tagFilterContainer = document.getElementById('tag-filter');
+    const tagFilterWrapper = document.getElementById('tag-filter-container');
     const paginationContainer = document.getElementById('pagination-container');
     const menuToggle = document.getElementById('menu-toggle');
     const menuClose = document.getElementById('menu-close');
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Close menu when a post link is clicked (useful on mobile)
+    // Close menu when a post link is clicked (useful on mobile).
     if (postListUl && postsListNav) {
         postListUl.addEventListener('click', (e) => {
             if (e.target.closest('a')) {
@@ -69,11 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Functions ---
 
-    // The post list links need a relative path that works from both the root
-    // and from per-post pages (one level deep). Posts live at /<slug>/, so a
-    // path starting with the slug works on any page when the JSON is fetched
-    // with a path-relative URL (see the fetch below). We use './' for root
-    // pages and '../' for nested pages.
+    // The post list links need a path that's correct from both the root
+    // (./<slug>/) and from a per-post page (../<slug>/). Detect from the URL.
     const getPostsBasePath = () => {
         const path = window.location.pathname;
         if (path === '/' || path.endsWith('/index.html') || path === '') {
@@ -101,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const postLinks = posts.map(post => {
             const isActive = activeSlug && post.slug === activeSlug;
             const cls = isActive ? 'active' : '';
-            return `<li><a href="${base}${post.slug}/" class="${cls}">${post.title}</a></li>`;
+            return `<li><a href="${base}${escapeHtml(post.slug)}/" class="${cls}">${escapeHtml(post.title)}</a></li>`;
         }).join('');
         postListUl.innerHTML = postLinks;
     };
@@ -113,24 +111,40 @@ document.addEventListener('DOMContentLoaded', () => {
         return d.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
     };
 
+    // Escape a string for safe interpolation into HTML. lazy-blog trusts
+    // the author of posts.json (it's a build artefact, not user input),
+    // so this is defence-in-depth: a stray `<` or `&` in a post title
+    // or tag should not break the rendered output.
+    const escapeHtml = (s) => String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    // Inline "Read more" link, used at the end of the excerpt paragraph
+    // on the root page (hero and cards).
+    const renderReadMore = (base, slug) =>
+        `<a href="${base}${escapeHtml(slug)}/" class="read-more">Read more &rarr;</a>`;
+
     const renderLatestPost = (post, olderPosts = []) => {
         if (!postContent) return;
         const base = getPostsBasePath();
         const dateStr = formatDate(post.date);
-        const tagsHtml = (post.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+        const tagsHtml = (post.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
         const descText = post.description || '';
         let olderHtml = '';
         if (olderPosts.length > 0) {
             const cards = olderPosts.map(p => {
                 const d = formatDate(p.date);
-                const t = (p.tags || []).slice(0, 3).map(x => `<span class="tag">${x}</span>`).join('');
+                const t = (p.tags || []).slice(0, 3).map(x => `<span class="tag">${escapeHtml(x)}</span>`).join('');
                 const cardDesc = p.description || '';
                 return `
                     <article class="post-card">
                         <p class="post-meta">${d}</p>
-                        <h3><a href="${base}${p.slug}/">${p.title}</a></h3>
+                        <h3><a href="${base}${escapeHtml(p.slug)}/">${escapeHtml(p.title)}</a></h3>
                         ${t ? `<div class="tags-container">${t}</div>` : ''}
-                        <p class="post-excerpt">${cardDesc} <a href="${base}${p.slug}/" class="read-more">Read more &rarr;</a></p>
+                        <p class="post-excerpt">${escapeHtml(cardDesc)} ${renderReadMore(base, p.slug)}</p>
                     </article>
                 `;
             }).join('');
@@ -143,18 +157,26 @@ document.addEventListener('DOMContentLoaded', () => {
         postContent.innerHTML = `
             <div class="post-header">
                 <p class="post-meta">${dateStr}</p>
-                <h1>${post.title}</h1>
+                <h1>${escapeHtml(post.title)}</h1>
             </div>
             ${tagsHtml ? `<div class="tags-container">${tagsHtml}</div>` : ''}
-            <p class="post-excerpt">${descText} <a href="${base}${post.slug}/" class="read-more">Read more &rarr;</a></p>
+            <p class="post-excerpt">${escapeHtml(descText)} ${renderReadMore(base, post.slug)}</p>
             ${olderHtml}
         `;
     };
 
     const renderPaginationControls = () => {
-        paginationContainer.innerHTML = '';
+        if (!paginationContainer) return;
         const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
-        if (totalPages <= 1) return;
+        // Hide the container entirely when there's only one page. A reader
+        // with JavaScript disabled still sees the empty <div> in the HTML,
+        // but it's invisible and has no styling that would reserve space.
+        if (totalPages <= 1) {
+            paginationContainer.innerHTML = '';
+            return;
+        }
+
+        paginationContainer.innerHTML = '';
 
         const createButton = (text, onClick, disabled) => {
             const button = document.createElement('button');
@@ -166,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const prevButton = createButton('Previous', () => { currentPage--; renderPostsForPage(); }, currentPage === 1);
         const nextButton = createButton('Next', () => { currentPage++; renderPostsForPage(); }, currentPage === totalPages);
-        
+
         const pageInfo = document.createElement('span');
         pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
         pageInfo.className = 'page-info';
@@ -198,7 +220,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderTagFilters = () => {
+        if (!tagFilterWrapper) return;
         const allTags = [...new Set(allPosts.flatMap(post => post.tags))];
+        // Clear the wrapper, then add the heading and the filter buttons.
+        // The heading is created here (not in the HTML template) so a
+        // reader with JavaScript disabled doesn't see "Filter by Tag"
+        // followed by no controls.
+        tagFilterWrapper.innerHTML = '';
+        const heading = document.createElement('h4');
+        heading.textContent = 'Filter by Tag';
+        tagFilterWrapper.appendChild(heading);
+
         tagFilterContainer.innerHTML = '';
 
         const createButton = (text, tag, isActive = false) => {
@@ -206,11 +238,11 @@ document.addEventListener('DOMContentLoaded', () => {
             button.classList.add('tag-button');
             button.textContent = text;
             if (isActive) button.classList.add('active');
-            
+
             button.addEventListener('click', () => {
                 document.querySelectorAll('#tag-filter button').forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                filterAndRender(tag); // Just filter the list, no routing
+                filterAndRender(tag); // Just filter the list, no routing.
             });
             return button;
         };
@@ -219,24 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
         allTags.forEach(tag => tagFilterContainer.appendChild(createButton(tag, tag)));
     };
 
-    // --- Vercel Web Analytics ---
-    // Inject the analytics script once per page. Idempotent — if a script
-    // with the same src is already in the head, do nothing.
-    const injectAnalytics = () => {
-        const src = '/_vercel/insights/script.js';
-        if (document.head.querySelector(`script[src="${src}"]`)) return;
-        const script = document.createElement('script');
-        script.src = src;
-        script.defer = true;
-        script.dataset.sdkn = '@vercel/analytics';
-        script.dataset.sdkv = '1';
-        document.head.appendChild(script);
-    };
-
     // --- Main Initialization ---
     const init = async () => {
-        // Run on every page that has a post list element. The hand-baked HTML
-        // nav is replaced with one driven by posts.json, sorted newest-first.
+        // Run on every page that has a post list element. The empty nav
+        // containers in the HTML are filled in from posts.json.
 
         if (!postListUl) {
             return;
@@ -259,15 +277,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // On the root page, render the latest post into the article area,
             // followed by a compact list of older posts. Per-post pages have
-            // their own hand-baked article content and are left untouched.
+            // their own article body pre-rendered at build time and the JS
+            // leaves it alone.
             if (getCurrentSlug() === null && allPosts.length > 0) {
                 const olderPostsLimit = 6;
                 renderLatestPost(allPosts[0], allPosts.slice(1, 1 + olderPostsLimit));
             }
-
-            // Vercel Web Analytics. Loaded after the main work so it doesn't
-            // compete with critical rendering.
-            injectAnalytics();
 
         } catch (error) {
             console.error('Error initializing app:', error);
