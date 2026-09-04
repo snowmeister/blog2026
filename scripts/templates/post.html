@@ -12,6 +12,14 @@
       {{BASE_PATH}}      Path prefix for asset and link URLs. "./" for the
                         root page, "../" for per-post pages. Use the
                         same prefix everywhere within a single template.
+      {{SITE_URL}}       Canonical site URL with no trailing slash
+                        (e.g. "https://blog.snowmeister.ninja"). Used
+                        to build absolute URLs in meta tags.
+      {{IMAGE_ABSOLUTE_URL}}
+                        Absolute URL to the post's social-card image.
+                        Falls back to the default card (images/social/
+                        default-card.webp) if the post doesn't specify
+                        one.
 
     The nav block (#posts-list, #tag-filter, etc.) is empty in the HTML and
     filled in by js/main.js from dist/posts.json at runtime.
@@ -30,11 +38,13 @@
     <meta property="og:url" content="./{{SLUG}}/">
     <meta property="og:title" content="{{TITLE}}">
     <meta property="og:description" content="{{DESCRIPTION}}">
+    <meta property="og:image" content="{{IMAGE_ABSOLUTE_URL}}">
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="./{{SLUG}}/">
     <meta property="twitter:title" content="{{TITLE}}">
     <meta property="twitter:description" content="{{DESCRIPTION}}">
+    <meta property="twitter:image" content="{{IMAGE_ABSOLUTE_URL}}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

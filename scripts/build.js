@@ -43,6 +43,71 @@ const POST_BASE_PATH = '../' + BASE_PATH.replace(/^(\.\/|\/)/, '');
 const matter = require('@11ty/gray-matter');
 const { marked } = require('marked');
 
+// --- Site configuration ----------------------------------------------------
+
+// Canonical site URL. Used to build absolute URLs for Open Graph and
+// Twitter card meta tags (social platforms require absolute image URLs).
+//
+// Resolution order:
+//   1. SITE_URL environment variable (overrides everything; useful for local
+//      testing with e.g. http://localhost:3000).
+//   2. `siteUrl` field in vercel.json (the single source of truth for
+//      production).
+//   3. Hardcoded fallback with a console warning so the build still
+//      succeeds but you notice it's missing.
+//
+// To change the site's canonical URL, edit `siteUrl` in vercel.json.
+const FALLBACK_SITE_URL = 'https://blog.snowmeister.ninja';
+const readSiteUrl = () => {
+    if (process.env.SITE_URL) return process.env.SITE_URL;
+    const vercelConfigPath = path.join(ROOT, 'vercel.json');
+    if (fs.existsSync(vercelConfigPath)) {
+        try {
+            const cfg = JSON.parse(fs.readFileSync(vercelConfigPath, 'utf8'));
+            if (cfg.siteUrl) return cfg.siteUrl;
+        } catch (e) {
+            console.warn(`  warn: could not parse ${vercelConfigPath}: ${e.message}`);
+        }
+    }
+    console.warn(`  warn: no SITE_URL env var and no siteUrl in vercel.json; using fallback ${FALLBACK_SITE_URL}`);
+    return FALLBACK_SITE_URL;
+};
+
+// Default social-card image, used when a post does not specify its own.
+// Path is relative to the site root. If the file does not exist on disk,
+// a warning is emitted but the build continues (the meta tag will point at
+// a missing asset, which is preferable to a hard build failure when
+// you're still iterating on the default).
+const DEFAULT_SOCIAL_IMAGE = '/images/social/default-card.webp';
+
+const SITE_URL = readSiteUrl().replace(/\/+$/, ''); // strip trailing slash
+
+/**
+ * Resolve a site-root-relative path (e.g. /images/foo.webp) to an
+ * absolute URL using the canonical SITE_URL. Returns the input as-is
+ * if it is already absolute (has a scheme).
+ */
+const absoluteUrl = (siteRootPath) => {
+    if (!siteRootPath) return '';
+    if (/^https?:\/\//i.test(siteRootPath)) return siteRootPath;
+    return SITE_URL + (siteRootPath.startsWith('/') ? '' : '/') + siteRootPath;
+};
+
+/**
+ * Warn if a referenced image file is missing from the images/ directory.
+ * Returns the image path unchanged so the build continues.
+ */
+const checkImageExists = (imagePath, file) => {
+    if (!imagePath) return imagePath;
+    // imagePath is site-root-relative (e.g. /images/social/foo.webp).
+    // Translate to a path on disk relative to the repo root.
+    const onDisk = path.join(ROOT, imagePath.replace(/^\//, ''));
+    if (!fs.existsSync(onDisk)) {
+        console.warn(`  warn: ${file}: image "${imagePath}" not found at ${path.relative(ROOT, onDisk)}`);
+    }
+    return imagePath;
+};
+
 /**
  * Derive a URL-safe slug from a title.
  * Lowercase, take the first N words, replace non-alphanumerics with '-'.
@@ -103,6 +168,8 @@ const renderPost = (template, post, bodyHtml, basePath) => {
     // "$5" or "$&" in it would otherwise corrupt the output).
     return template
         .replace(/\{\{BASE_PATH\}\}/g, () => basePath)
+        .replace(/\{\{SITE_URL\}\}/g, () => SITE_URL)
+        .replace(/\{\{IMAGE_ABSOLUTE_URL\}\}/g, () => absoluteUrl(post.image || DEFAULT_SOCIAL_IMAGE))
         .replace(/\{\{TITLE\}\}/g, () => escapeHtml(post.title))
         .replace(/\{\{DESCRIPTION\}\}/g, () => escapeHtml(post.description || ''))
         .replace(/\{\{SLUG\}\}/g, () => escapeHtml(post.slug))
@@ -123,6 +190,8 @@ const renderIndex = (template, posts, basePath) => {
 
     return template
         .replace(/\{\{BASE_PATH\}\}/g, () => basePath)
+        .replace(/\{\{SITE_URL\}\}/g, () => SITE_URL)
+        .replace(/\{\{IMAGE_ABSOLUTE_URL\}\}/g, () => absoluteUrl(DEFAULT_SOCIAL_IMAGE))
         .replace(/\{\{NOSCRIPT_POSTS_LIST\}\}/g, () => noscriptItems);
 };
 
@@ -151,11 +220,16 @@ const parsePost = (file, fileContent, stats) => {
             warn(`"date" is not a valid date ("${data.date}"); using file mtime`);
         }
     }
+    if (data.image !== undefined && typeof data.image !== 'string') {
+        warn('"image" should be a string path; ignoring');
+        data.image = '';
+    }
+    checkImageExists(data.image || DEFAULT_SOCIAL_IMAGE, file);
 
     return {
         title: data.title || 'Untitled Post',
         description: data.description || '',
-        image: data.image || '',
+        image: data.image || DEFAULT_SOCIAL_IMAGE,
         tags: Array.isArray(data.tags) ? data.tags : [],
         file,
         slug: data.slug || deriveSlug(data.title || 'untitled'),

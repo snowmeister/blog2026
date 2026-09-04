@@ -12,6 +12,13 @@
                                newest-first order. Each links to
                                ./<slug>/ (relative to the root).
 
+      {{SITE_URL}}             Canonical site URL with no trailing slash.
+                               Used to build absolute URLs in meta tags.
+
+      {{IMAGE_ABSOLUTE_URL}}   Absolute URL to the homepage's social-card
+                               image (the default card, since no post is
+                               associated with the root page).
+
       {{BASE_PATH}}            Path prefix for asset and link URLs.
                                Always "./" on the root template.
 -->
@@ -29,11 +36,13 @@
     <meta property="og:url" content="./">
     <meta property="og:title" content="Bites, Beaks, Bytes And Rights">
     <meta property="og:description" content="A blog by Snowy — code, AI, disability, politics, parrots, and the experiments in between.">
+    <meta property="og:image" content="{{IMAGE_ABSOLUTE_URL}}">
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="./">
     <meta property="twitter:title" content="Bites, Beaks, Bytes And Rights">
     <meta property="twitter:description" content="A blog by Snowy — code, AI, disability, politics, parrots, and the experiments in between.">
+    <meta property="twitter:image" content="{{IMAGE_ABSOLUTE_URL}}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
