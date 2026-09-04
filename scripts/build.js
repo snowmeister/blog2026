@@ -49,27 +49,20 @@ const { marked } = require('marked');
 // Twitter card meta tags (social platforms require absolute image URLs).
 //
 // Resolution order:
-//   1. SITE_URL environment variable (overrides everything; useful for local
-//      testing with e.g. http://localhost:3000).
-//   2. `siteUrl` field in vercel.json (the single source of truth for
-//      production).
-//   3. Hardcoded fallback with a console warning so the build still
+//   1. SITE_URL environment variable. In production this is set per
+//      environment on the Vercel project dashboard
+//      (Settings -> Environment Variables). Vercel surfaces it as
+//      process.env.SITE_URL at build time. For local testing, export
+//      SITE_URL=http://localhost:3000 in your shell.
+//   2. Hardcoded fallback with a console warning so the build still
 //      succeeds but you notice it's missing.
 //
-// To change the site's canonical URL, edit `siteUrl` in vercel.json.
+// To change the site's canonical URL for production, update the
+// SITE_URL environment variable on the Vercel project dashboard.
 const FALLBACK_SITE_URL = 'https://blog.snowmeister.ninja';
 const readSiteUrl = () => {
     if (process.env.SITE_URL) return process.env.SITE_URL;
-    const vercelConfigPath = path.join(ROOT, 'vercel.json');
-    if (fs.existsSync(vercelConfigPath)) {
-        try {
-            const cfg = JSON.parse(fs.readFileSync(vercelConfigPath, 'utf8'));
-            if (cfg.siteUrl) return cfg.siteUrl;
-        } catch (e) {
-            console.warn(`  warn: could not parse ${vercelConfigPath}: ${e.message}`);
-        }
-    }
-    console.warn(`  warn: no SITE_URL env var and no siteUrl in vercel.json; using fallback ${FALLBACK_SITE_URL}`);
+    console.warn(`  warn: no SITE_URL env var; using fallback ${FALLBACK_SITE_URL}`);
     return FALLBACK_SITE_URL;
 };
 

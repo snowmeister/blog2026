@@ -134,21 +134,51 @@ unset.
 
 ## Front matter gotchas
 
-These are bugs in the current code, not features. Watch out:
+*(Remove this section once you've lived with the blog a while — it
+documents quirks of the current code that you should fix or accept
+permanently.)*
 
-- **`image` field is read but never used.** The `post.html` template
+- **`image` field is read but never used.** ~~The `post.html` template
   has no `{{IMAGE}}` placeholder, and the build script does not
   generate an `<meta property="og:image">` tag from it. If you want
   social card previews per post, the template and `renderPost()` need
-  a small addition.
-- **`image` is also missing from `posts.json`.** Only
-  `title`/`description`/`tags`/`file`/`slug`/`date` are written, so
+  a small addition.~~ **Fixed on the `feature/social-cards` branch.**
+- **`image` is also missing from `posts.json`.** ~~Only~~ `title` /
+  `description` / `tags` / `file` / `slug` / `date` are written, so
   client-side rendering has no card image to work with either.
-- **No `BASE_PATH` → root URLs are relative (`./`).** Fine for Vercel
-  URL-root deploys; set `BASE_PATH` explicitly if you ever move the
-  site off-root.
+  **Fixed on the `feature/social-cards` branch — `image` is included.**
 
 ---
+
+## Configuration
+
+There is one piece of runtime configuration: the canonical site URL,
+used to build absolute URLs for `og:image` / `twitter:image` meta
+tags.
+
+- **Production:** set as a Vercel environment variable. Project
+  Settings → Environment Variables → add `SITE_URL` (e.g.
+  `https://blog.snowmeister.ninja`). Vercel exposes it as
+  `process.env.SITE_URL` at build time.
+- **Preview:** optional. If unset, the build uses the hardcoded
+  fallback URL, so `og:image` links on preview deploys point back at
+  production. Fine for sharing.
+- **Local:** `export SITE_URL=http://localhost:3000` before running
+  `npm run build`, or just let it fall through to the fallback.
+
+To change the production URL: update the `SITE_URL` env var on the
+Vercel dashboard. One place.
+
+## Front matter gotchas
+
+These are quirks of the current code. Watch out:
+
+- **Default social card does not exist yet.** Build emits a warning
+  per post (`image "/images/social/default-card.webp" not found`)
+  but continues. Drop a 1024×1024 default card at that path when
+  ready and the warnings will go away.
+- **`dist/` is gitignored.** It is never committed; Vercel rebuilds
+  it on push.
 
 ## Customising
 
