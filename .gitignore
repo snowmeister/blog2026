@@ -140,3 +140,5 @@ vite.config.ts.timestamp-*
 
 # Local scratch content
 drafts/
+.DS_Store
+._.DS_Store
