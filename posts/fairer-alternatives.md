@@ -8,6 +8,7 @@ tags:
   - disability
 date: 2025-07-05T13:46:07.000Z
 slug: fairer-alternatives
+image: /images/social/fairer-alternatives.webp
 ---
 
 If you've read my [previous post on this subject](/the-new-bill-a-calculate-blow/), you'll know this isn't just theory for me. I'm writing as someone who will be directly affected by the UK government's latest plans to cut welfare. I'm disabled. I rely on the support that's now under threat, not for luxuries, but to survive. And honestly? I'm angry. Not just for myself, but for everyone who's being told, yet again, that we're the problem. That we're the ones who need to "tighten our belts" while others look the other way.

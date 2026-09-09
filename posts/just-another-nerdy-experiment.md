@@ -18,7 +18,7 @@ I have rather mixed opinions regarding Artificial Intelligence, Machine Learning
 
 I've worked in technology, the web and software development since the early 90's so i think i can say I'm a bit of a dinosaur. I remember the gold rush. The dot com boom. And the wild frontier. Nearly 30yrs at the code-face, good and bad.
 
-Unsurprisingly, I've been doing my best to keep up with the developments in AI. From the "nah, its all hype" 4-5 yrs ago, to being absolutely blown away by some of the things AI, LLMS, and most recently Agents are capable of.
+Unsurprisingly, I've been doing my best to keep up with the developments in AI. From the "nah, its all hype" 4-5 yrs ago, to being absolutely blown away by some of the things AI, LLMS, and most recently, Agents, are capable of.
 
 When Ollama was released, I started playing with local LLMs, and then, got sucked into the subscription model with a cloud provider, paying ££ a month. At this point, may i recommend [Abacus](https://abacus.ai)? Pay one monthly fee, get access to all the big models, including the image generators. \*
 

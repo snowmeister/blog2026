@@ -8,6 +8,7 @@ tags:
   - disability
 date: 2025-07-03T20:36:28.000Z
 slug: the-new-bill-a-calculate-blow
+image: /images/social/the-new-bill-a-calculate-blow.webp
 ---
 
 I've spent the last few days digging through the details of the new welfare bill, and I can't pretend to be anything but furious. If you're disabled, chronically ill, or unable to work, this bill isn't just a policy tweak, it's a deliberate move to make life even tougher for people who's lives are already hard enough.

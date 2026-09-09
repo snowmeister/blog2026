@@ -8,6 +8,7 @@ tags:
   - disability
 date: 2025-07-07T10:25:01.000Z
 slug: the-knock-on-effects
+image: /images/social/the-ripple-effect.webp
 ---
 
 It's easy to think of the UK's social safety net as something distant, a line on a government spreadsheet that only affects a small number of people. But the truth is, that safety net is woven into the very fabric of our communities, and when you start to pull at one thread, the whole jumper can start to unravel.
